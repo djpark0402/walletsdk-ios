@@ -1,0 +1,11 @@
+framework module OmniOneWallet_iOS {
+  umbrella header "OmniOneWallet_iOS.h"
+
+  export *
+  module * { export * }
+}
+
+module OmniOneWallet_iOS.Swift {
+  header "OmniOneWallet_iOS-Swift.h"
+  requires objc
+}

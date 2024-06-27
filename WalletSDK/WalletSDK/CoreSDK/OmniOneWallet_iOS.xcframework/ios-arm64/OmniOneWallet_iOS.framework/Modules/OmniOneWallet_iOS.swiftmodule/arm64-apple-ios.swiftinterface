@@ -1,0 +1,518 @@
+// swift-interface-format-version: 1.0
+// swift-compiler-version: Apple Swift version 5.7 (swiftlang-5.7.0.127.4 clang-1400.0.29.50)
+// swift-module-flags: -target arm64-apple-ios15.0 -enable-objc-interop -enable-library-evolution -swift-version 5 -enforce-exclusivity=checked -O -module-name OmniOneWallet_iOS
+// swift-module-flags-ignorable: -enable-bare-slash-regex
+import CommonCrypto
+import CryptoKit
+import Foundation
+@_exported import OmniOneWallet_iOS
+import Security
+import Swift
+import UIKit
+import _Concurrency
+import _StringProcessing
+public enum MultibaseEnum : Swift.String {
+  case base16
+  case base16upper
+  case base58btc
+  case base64
+  case base64url
+  public static func encode(with source: Foundation.Data, to baseType: OmniOneWallet_iOS.MultibaseEnum) -> Swift.String
+  public static func decode(multibase: Swift.String) -> Foundation.Data?
+  public init?(rawValue: Swift.String)
+  public typealias RawValue = Swift.String
+  public var rawValue: Swift.String {
+    get
+  }
+}
+public struct KeyGenRequest : OmniOneWallet_iOS.KeyGenRequestProtocol {
+  public var keyId: Swift.String
+  public var algorithmType: OmniOneWallet_iOS.AlgorithmType
+  public var storeType: OmniOneWallet_iOS.StoreType {
+    get
+  }
+  public init(keyId: Swift.String, algoType: OmniOneWallet_iOS.AlgorithmType)
+}
+public struct PinKeyGenRequest : OmniOneWallet_iOS.PinKeyGenRequestProtocol {
+  public var keyId: Swift.String
+  public var algorithmType: OmniOneWallet_iOS.AlgorithmType
+  public var storeType: OmniOneWallet_iOS.StoreType {
+    get
+  }
+  public var pin: Foundation.Data
+  public init(keyId: Swift.String, algoType: OmniOneWallet_iOS.AlgorithmType, pin: Foundation.Data)
+}
+public struct SecureKeyGenRequest {
+  public var keyId: Swift.String
+  public var algorithmType: OmniOneWallet_iOS.AlgorithmType
+  public var storeType: OmniOneWallet_iOS.StoreType {
+    get
+  }
+  public var bioType: OmniOneWallet_iOS.BioType
+  public init(keyId: Swift.String, algoType: OmniOneWallet_iOS.AlgorithmType, bioType: OmniOneWallet_iOS.BioType)
+}
+public struct ProofSignKeyInfo {
+  public var keyId: Swift.String
+  public var did: Swift.String
+  public var proofPurpose: OmniOneWallet_iOS.ProofPurpose
+  public var password: Foundation.Data?
+  public init(keyId: Swift.String, did: Swift.String, proofPurpose: OmniOneWallet_iOS.ProofPurpose, password: Foundation.Data? = nil)
+}
+public struct RawSignKeyInfo {
+  public var keyId: Swift.String
+  public var password: Foundation.Data?
+  public init(keyId: Swift.String, password: Foundation.Data? = nil)
+}
+public struct SignatureInfo {
+  public var signature: Foundation.Data
+  public var algorithmType: OmniOneWallet_iOS.AlgorithmType
+}
+public struct WalletKeyInfo {
+  public var keyId: Swift.String
+  public var algorithmType: OmniOneWallet_iOS.AlgorithmType
+  public var storeType: OmniOneWallet_iOS.StoreType
+  public var publicKey: Swift.String
+  public var bioType: OmniOneWallet_iOS.BioType?
+  public init(id: Swift.String, algorithmType: OmniOneWallet_iOS.AlgorithmType, storeType: OmniOneWallet_iOS.StoreType, publicKey: Swift.String, bioType: OmniOneWallet_iOS.BioType? = nil)
+}
+public enum StoreType : Swift.Int, Swift.Codable {
+  case `default`
+  case pin
+  case secure
+  public init?(rawValue: Swift.Int)
+  public typealias RawValue = Swift.Int
+  public var rawValue: Swift.Int {
+    get
+  }
+}
+public enum ProofPurpose : Swift.String {
+  case assertionMethod
+  public init?(rawValue: Swift.String)
+  public typealias RawValue = Swift.String
+  public var rawValue: Swift.String {
+    get
+  }
+}
+public struct KeyManager {
+  public init()
+  public func generateAndSaveKey(keyInfo: OmniOneWallet_iOS.KeyGenRequestProtocol) throws
+  public func changePin(keyId: Swift.String, oldPin: Foundation.Data, newPin: Foundation.Data) throws
+  public func sign<T>(source: T, keyInfos: [OmniOneWallet_iOS.ProofSignKeyInfo]) throws -> T where T : OmniOneWallet_iOS.ProofContainerProtocol
+  public func sign(source: Foundation.Data, keyInfos: [OmniOneWallet_iOS.RawSignKeyInfo]) throws -> [OmniOneWallet_iOS.SignatureInfo]
+  public func verify(signature: Foundation.Data, source: Foundation.Data, publicKey: Foundation.Data, algoType: OmniOneWallet_iOS.AlgorithmType) throws
+  public func getAllKeyList() throws -> [OmniOneWallet_iOS.WalletKeyInfo]?
+  public func getKeyInfo(keyId: Swift.String) throws -> OmniOneWallet_iOS.WalletKeyInfo?
+  public func removeAllKeyList() throws
+  public func removeKey(keyId: Swift.String) throws
+  public func getECDHSharedSecret(keyId: Swift.String, publicKey: Swift.String) throws -> Foundation.Data
+}
+public enum KeySizeType : Swift.UInt {
+  case bits128
+  case bits256
+  public init?(rawValue: Swift.UInt)
+  public typealias RawValue = Swift.UInt
+  public var rawValue: Swift.UInt {
+    get
+  }
+}
+public struct KeyPairInfo {
+  public var algorithmType: OmniOneWallet_iOS.AlgorithmType {
+    get
+  }
+  public var publicKey: Swift.String {
+    get
+  }
+  public var privateKey: Swift.String {
+    get
+  }
+}
+@objc @_inheritsConvenienceInitializers public class CryptoSuites : ObjectiveC.NSObject {
+  public static let pbkdf2Rounds: Swift.UInt
+  public static func generateKeyPair(algorithmType: OmniOneWallet_iOS.AlgorithmType) throws -> OmniOneWallet_iOS.KeyPairInfo
+  public static func getECDHSharedSecret(algoType: OmniOneWallet_iOS.AlgorithmType, privKeyMultibase: Swift.String, pubKeyMultibase: Swift.String) throws -> Foundation.Data
+  public static func aesEncrypt(plain: Foundation.Data, symmetricKey: Foundation.Data, keySizeType: OmniOneWallet_iOS.KeySizeType) throws -> Foundation.Data
+  public static func aesDecrypt(cipher: Foundation.Data, symmetricKey: Foundation.Data, keySizeType: OmniOneWallet_iOS.KeySizeType) throws -> Foundation.Data
+  public static func aesEncrypt(plain: Foundation.Data, key: Foundation.Data, iv: Foundation.Data, keySizeType: OmniOneWallet_iOS.KeySizeType) throws -> Foundation.Data
+  public static func aesDecrypt(cipher: Foundation.Data, key: Foundation.Data, iv: Foundation.Data, keySizeType: OmniOneWallet_iOS.KeySizeType) throws -> Foundation.Data
+  public static func secureEncrypt(plain: Foundation.Data) throws -> Foundation.Data
+  public static func secureDecrypt(cipher: Foundation.Data) throws -> Foundation.Data
+  public static func pbkdf2(seed: Foundation.Data, salt: Foundation.Data, rounds: Swift.UInt = pbkdf2Rounds, derivedKeyLength: Swift.UInt) throws -> Foundation.Data
+  @objc override dynamic public init()
+  @objc deinit
+}
+public enum BioType : Swift.Int, Swift.Codable {
+  case notUse
+  case current
+  case any
+  public init?(rawValue: Swift.Int)
+  public typealias RawValue = Swift.Int
+  public var rawValue: Swift.Int {
+    get
+  }
+}
+public enum AlgorithmType : Swift.Int, Swift.Codable, Swift.CaseIterable {
+  case secp256r1
+  public enum MethodType : Swift.String {
+    case verificationKey
+    case keyAgreementKey
+    public init?(rawValue: Swift.String)
+    public typealias RawValue = Swift.String
+    public var rawValue: Swift.String {
+      get
+    }
+  }
+  public static func takeAlgorithm(from: Swift.String) -> OmniOneWallet_iOS.AlgorithmType?
+  public func getAlgorithmString() -> Swift.String
+  public func getTypeString(type: OmniOneWallet_iOS.AlgorithmType.MethodType) -> Swift.String
+  public init?(rawValue: Swift.Int)
+  public typealias AllCases = [OmniOneWallet_iOS.AlgorithmType]
+  public typealias RawValue = Swift.Int
+  public static var allCases: [OmniOneWallet_iOS.AlgorithmType] {
+    get
+  }
+  public var rawValue: Swift.Int {
+    get
+  }
+}
+public struct DIDKeyInfo : OmniOneWallet_iOS.DataModelable {
+  public var id: Swift.String
+  public var type: Swift.String
+  public var controller: Swift.String
+  public var publicKeyMultibase: Swift.String
+  public var authType: Swift.Int
+  public var status: OmniOneWallet_iOS.DIDStatus
+  public func encode(to encoder: Swift.Encoder) throws
+  public var hashValue: Swift.Int {
+    get
+  }
+  public init(from decoder: Swift.Decoder) throws
+}
+public struct Service : OmniOneWallet_iOS.DataModelable {
+  public var id: Swift.String
+  public var type: Swift.String
+  public var serviceEndpoint: [Swift.String]
+  public func encode(to encoder: Swift.Encoder) throws
+  public var hashValue: Swift.Int {
+    get
+  }
+  public init(from decoder: Swift.Decoder) throws
+}
+public struct DIDDocument : OmniOneWallet_iOS.DataModelable, OmniOneWallet_iOS.ProofContainerProtocol {
+  public var context: [Swift.String]
+  public var id: Swift.String
+  public var controller: Swift.String
+  public var verificationMethod: [OmniOneWallet_iOS.DIDKeyInfo]
+  public var assertionMethod: [Swift.String]?
+  public var authentication: [Swift.String]?
+  public var keyAgreement: [Swift.String]?
+  public var capabilityInvocation: [Swift.String]?
+  public var service: [OmniOneWallet_iOS.Service]?
+  public var updated: Swift.String?
+  public var proof: [OmniOneWallet_iOS.ProofProtocol]?
+  public init(from decoder: Swift.Decoder) throws
+  public func encode(to encoder: Swift.Encoder) throws
+  public var hashValue: Swift.Int {
+    get
+  }
+}
+public enum OdiError : Swift.Error {
+  case error(code: Swift.String, msg: Swift.String)
+}
+public struct Proof : OmniOneWallet_iOS.ProofProtocol {
+  public var proofPurpose: Swift.String
+  public var created: Swift.String
+  public var verificationMethod: Swift.String
+  public var proofValue: Swift.String?
+  public var type: Swift.String?
+  public func encode(to encoder: Swift.Encoder) throws
+  public var hashValue: Swift.Int {
+    get
+  }
+  public init(from decoder: Swift.Decoder) throws
+}
+public struct ClaimProof {
+  public var proofPurpose: Swift.String
+  public var created: Swift.String
+  public var verificationMethod: Swift.String
+  public var proofValue: Swift.String?
+  public var type: Swift.String?
+  public var proofValueList: [Swift.String]?
+  public func encode(to encoder: Swift.Encoder) throws
+  public var hashValue: Swift.Int {
+    get
+  }
+  public init(from decoder: Swift.Decoder) throws
+}
+public struct VCManager {
+  public init()
+  public func addCredential(multibaseJson: Swift.String, issuerDIDDoc: OmniOneWallet_iOS.DIDDocument) throws
+  public func removeCredential(credentialId: Swift.String) throws
+  public func removeAllCredentials() throws
+  public func getAllCredentials() throws -> [OmniOneWallet_iOS.VerifiableCredential]?
+  public func getCredentialsByCondition(conditionList: [OmniOneWallet_iOS.SubmissionCondition]) throws -> [OmniOneWallet_iOS.VerifiableCredential]?
+  public func makePresentation(requestList: [OmniOneWallet_iOS.PresentationRequestInfo], conditionList: [OmniOneWallet_iOS.SubmissionCondition]?, validUntil: Swift.String) throws -> OmniOneWallet_iOS.VerifiablePresentation
+}
+public typealias DataModelable = OmniOneWallet_iOS.Jsonable & OmniOneWallet_iOS.Loopable
+public protocol ProofContainerProtocol : OmniOneWallet_iOS.Jsonable {
+  var proof: [OmniOneWallet_iOS.ProofProtocol]? { get set }
+}
+public protocol ProofProtocol : OmniOneWallet_iOS.Jsonable, OmniOneWallet_iOS.Loopable {
+  var created: Swift.String { get set }
+  var verificationMethod: Swift.String { get set }
+  var proofPurpose: Swift.String { get set }
+  var type: Swift.String? { get set }
+  var proofValue: Swift.String? { get set }
+}
+public protocol Jsonable : Swift.Decodable, Swift.Encodable {
+  init(from jsonData: Foundation.Data) throws
+  init(from jsonString: Swift.String) throws
+  func toJsonData(isPretty: Swift.Bool) throws -> Foundation.Data
+  func toJson(isPretty: Swift.Bool) throws -> Swift.String
+}
+extension OmniOneWallet_iOS.Jsonable {
+  public init(from jsonData: Foundation.Data) throws
+  public init(from jsonString: Swift.String) throws
+  public func toJsonData(isPretty: Swift.Bool = false) throws -> Foundation.Data
+  public func toJson(isPretty: Swift.Bool = false) throws -> Swift.String
+}
+public protocol Loopable : Swift.Hashable {
+  var allProperties: [Swift.String : Any] { get }
+  static func == (lhs: Self, rhs: Self) -> Swift.Bool
+}
+extension OmniOneWallet_iOS.Loopable {
+  public var allProperties: [Swift.String : Any] {
+    get
+  }
+  public static func == (lhs: Self, rhs: Self) -> Swift.Bool
+  public func hash(into hasher: inout Swift.Hasher)
+}
+public struct SubmissionCondition : OmniOneWallet_iOS.DataModelable {
+  public var category: Swift.String
+  public var schemaList: [Swift.String]
+  public var displayClaimList: [Swift.String]?
+  public var filter: OmniOneWallet_iOS.SubmissionFilter?
+  public func encode(to encoder: Swift.Encoder) throws
+  public var hashValue: Swift.Int {
+    get
+  }
+  public init(from decoder: Swift.Decoder) throws
+}
+public struct SubmissionFilter : OmniOneWallet_iOS.DataModelable {
+  public var alList: [Swift.String]?
+  public var issuerList: [Swift.String]?
+  public var requiredClaimList: [Swift.String]?
+  public func encode(to encoder: Swift.Encoder) throws
+  public var hashValue: Swift.Int {
+    get
+  }
+  public init(from decoder: Swift.Decoder) throws
+}
+public struct PresentationRequestInfo {
+  public var credentialId: Swift.String
+  public var claims: [Swift.String]
+  public init(credentialId: Swift.String, claims: [Swift.String])
+}
+public struct VerifiableCredential : OmniOneWallet_iOS.DataModelable, OmniOneWallet_iOS.ProofContainerProtocol {
+  public var context: [Swift.String]
+  public var id: Swift.String
+  public var type: [Swift.String]
+  public var issuer: OmniOneWallet_iOS.VerifiableCredential.IssuerInfo
+  public var issuanceDate: Swift.String
+  public var validFrom: Swift.String
+  public var validUntil: Swift.String
+  public var credentialSubject: OmniOneWallet_iOS.VerifiableCredential.CredentialSubject
+  public var evidence: [OmniOneWallet_iOS.VerifiableCredential.Evidence]
+  public var evidenceLevel: Swift.String
+  public var proof: [OmniOneWallet_iOS.ProofProtocol]?
+  public var formatVersion: Swift.String
+  public var schema: OmniOneWallet_iOS.VerifiableCredential.Schema
+  public var language: Swift.String?
+  public var encoding: Swift.String?
+  public func encode(to encoder: Swift.Encoder) throws
+  public init(from decoder: Swift.Decoder) throws
+  public struct IssuerInfo : OmniOneWallet_iOS.DataModelable {
+    public var id: Swift.String
+    public var name: Swift.String
+    public var desc: Swift.String?
+    public func encode(to encoder: Swift.Encoder) throws
+    public var hashValue: Swift.Int {
+      get
+    }
+    public init(from decoder: Swift.Decoder) throws
+  }
+  public struct CredentialSubject : OmniOneWallet_iOS.DataModelable {
+    public var id: Swift.String
+    public var claims: [OmniOneWallet_iOS.VerifiableCredential.Claim]?
+    public var `extension`: OmniOneWallet_iOS.VerifiableCredential.ClaimExtension?
+    public func encode(to encoder: Swift.Encoder) throws
+    public var hashValue: Swift.Int {
+      get
+    }
+    public init(from decoder: Swift.Decoder) throws
+  }
+  public struct Claim : OmniOneWallet_iOS.DataModelable {
+    public var code: Swift.String
+    public var value: Swift.String
+    public var caption: Swift.String
+    public var attribute: OmniOneWallet_iOS.VerifiableCredential.Attribute?
+    public var digestSRI: Swift.String?
+    public func encode(to encoder: Swift.Encoder) throws
+    public var hashValue: Swift.Int {
+      get
+    }
+    public init(from decoder: Swift.Decoder) throws
+  }
+  public struct Attribute : OmniOneWallet_iOS.DataModelable {
+    public var type: Swift.String
+    public var format: Swift.String
+    public var hideValue: Swift.Bool
+    public var location: Swift.String
+    public func encode(to encoder: Swift.Encoder) throws
+    public var hashValue: Swift.Int {
+      get
+    }
+    public init(from decoder: Swift.Decoder) throws
+  }
+  public struct ClaimExtension : OmniOneWallet_iOS.DataModelable {
+    public var claims: [OmniOneWallet_iOS.VerifiableCredential.Claim]
+    public var proof: [OmniOneWallet_iOS.Proof]
+    public func encode(to encoder: Swift.Encoder) throws
+    public var hashValue: Swift.Int {
+      get
+    }
+    public init(from decoder: Swift.Decoder) throws
+  }
+  public struct Evidence : OmniOneWallet_iOS.DataModelable {
+    public var type: [Swift.String]
+    public var verifier: Swift.String
+    public var evidenceDocument: Swift.String
+    public var subjectPresence: Swift.String
+    public var documentPresence: Swift.String
+    public func encode(to encoder: Swift.Encoder) throws
+    public var hashValue: Swift.Int {
+      get
+    }
+    public init(from decoder: Swift.Decoder) throws
+  }
+  public struct Schema : OmniOneWallet_iOS.DataModelable {
+    public var id: Swift.String
+    public var name: Swift.String?
+    public var version: Swift.String
+    public func encode(to encoder: Swift.Encoder) throws
+    public var hashValue: Swift.Int {
+      get
+    }
+    public init(from decoder: Swift.Decoder) throws
+  }
+  public var hashValue: Swift.Int {
+    get
+  }
+}
+public struct VerifiablePresentation : OmniOneWallet_iOS.DataModelable, OmniOneWallet_iOS.ProofContainerProtocol {
+  public var context: [Swift.String]
+  public var validFrom: Swift.String
+  public var validUntil: Swift.String
+  public var holder: Swift.String
+  public var id: Swift.String
+  public var proof: [OmniOneWallet_iOS.ProofProtocol]?
+  public var type: [Swift.String]
+  public var verifiableCredential: [OmniOneWallet_iOS.VerifiableCredential]
+  public init(holder: Swift.String, validUntil: Swift.String, verifiableCredential: [OmniOneWallet_iOS.VerifiableCredential])
+  public init(from decoder: Swift.Decoder) throws
+  public func encode(to encoder: Swift.Encoder) throws
+  public var hashValue: Swift.Int {
+    get
+  }
+}
+@_hasMissingDesignatedInitializers public class ODIUtility {
+  public static func getUTC0Date(seconds: Swift.UInt) -> Swift.String
+  public static func getVersion() -> Swift.String
+  @objc deinit
+}
+extension OmniOneWallet_iOS.ODIUtility {
+  public static func verifyDigestSRI(of value: Swift.String, with source: Foundation.Data) -> Swift.Bool
+}
+public struct DIDMethodType : Swift.OptionSet, Swift.Sequence {
+  public let rawValue: Swift.Int
+  public static let assertionMethod: OmniOneWallet_iOS.DIDMethodType
+  public static let authentication: OmniOneWallet_iOS.DIDMethodType
+  public static let keyAgreement: OmniOneWallet_iOS.DIDMethodType
+  public init(rawValue: Swift.Int)
+  public typealias ArrayLiteralElement = OmniOneWallet_iOS.DIDMethodType.Element
+  public typealias Element = OmniOneWallet_iOS.DIDMethodType
+  public typealias Iterator = OmniOneWallet_iOS.OptionSetIterator<OmniOneWallet_iOS.DIDMethodType>
+  public typealias RawValue = Swift.Int
+}
+extension Swift.OptionSet where Self.RawValue == Swift.Int {
+  public func makeIterator() -> OmniOneWallet_iOS.OptionSetIterator<Self>
+}
+public struct OptionSetIterator<Element> : Swift.IteratorProtocol where Element : Swift.OptionSet, Element.RawValue == Swift.Int {
+  public init(element: Element)
+  public mutating func next() -> Element?
+}
+public enum DIDStatus : Swift.String, Swift.Codable {
+  case valid
+  case paused
+  case revoked
+  public init?(rawValue: Swift.String)
+  public typealias RawValue = Swift.String
+  public var rawValue: Swift.String {
+    get
+  }
+}
+final public class DIDManager {
+  final public var isMainDASet: Swift.Bool {
+    get
+  }
+  public init()
+  final public func getMainDA() throws -> Swift.String
+  final public func getRedundancyDA() -> [Swift.String]
+  final public func setMainDA(da: Swift.String) throws
+  final public func createNewDocument(da: Swift.String, controller: Swift.String? = nil) throws
+  final public func addVerificationMethod(with keyInfo: OmniOneWallet_iOS.WalletKeyInfo, controller: Swift.String? = nil, linkTo methodType: OmniOneWallet_iOS.DIDMethodType) throws
+  final public func removeVerificationMethod(with keyId: Swift.String) throws
+  final public func addLink(with keyIds: [Swift.String], to methodType: OmniOneWallet_iOS.DIDMethodType) throws
+  final public func removeLink(with keyId: Swift.String, at methodType: OmniOneWallet_iOS.DIDMethodType) throws
+  final public func getLinkedField(with keyId: Swift.String) throws -> OmniOneWallet_iOS.DIDMethodType
+  final public func abortChanges()
+  final public func replaceDocument(Json: Swift.String) throws
+  final public func getDocument() throws -> OmniOneWallet_iOS.DIDDocument
+  final public func saveChanges() throws
+  final public func deleteAllDocuments() throws
+  final public func deleteRedundancyDA(da: Swift.String) throws
+  @objc deinit
+}
+public protocol KeyGenRequestProtocol {
+  var keyId: Swift.String { get }
+  var algorithmType: OmniOneWallet_iOS.AlgorithmType { get }
+  var storeType: OmniOneWallet_iOS.StoreType { get }
+}
+public protocol PinKeyGenRequestProtocol : OmniOneWallet_iOS.KeyGenRequestProtocol {
+  var pin: Foundation.Data { get }
+}
+extension OmniOneWallet_iOS.MultibaseEnum : Swift.Equatable {}
+extension OmniOneWallet_iOS.MultibaseEnum : Swift.Hashable {}
+extension OmniOneWallet_iOS.MultibaseEnum : Swift.RawRepresentable {}
+extension OmniOneWallet_iOS.SecureKeyGenRequest : OmniOneWallet_iOS.KeyGenRequestProtocol {}
+extension OmniOneWallet_iOS.StoreType : Swift.Equatable {}
+extension OmniOneWallet_iOS.StoreType : Swift.Hashable {}
+extension OmniOneWallet_iOS.StoreType : Swift.RawRepresentable {}
+extension OmniOneWallet_iOS.ProofPurpose : Swift.Equatable {}
+extension OmniOneWallet_iOS.ProofPurpose : Swift.Hashable {}
+extension OmniOneWallet_iOS.ProofPurpose : Swift.RawRepresentable {}
+extension OmniOneWallet_iOS.KeySizeType : Swift.Equatable {}
+extension OmniOneWallet_iOS.KeySizeType : Swift.Hashable {}
+extension OmniOneWallet_iOS.KeySizeType : Swift.RawRepresentable {}
+extension OmniOneWallet_iOS.BioType : Swift.Equatable {}
+extension OmniOneWallet_iOS.BioType : Swift.Hashable {}
+extension OmniOneWallet_iOS.BioType : Swift.RawRepresentable {}
+extension OmniOneWallet_iOS.AlgorithmType : Swift.Equatable {}
+extension OmniOneWallet_iOS.AlgorithmType : Swift.Hashable {}
+extension OmniOneWallet_iOS.AlgorithmType : Swift.RawRepresentable {}
+extension OmniOneWallet_iOS.AlgorithmType.MethodType : Swift.Equatable {}
+extension OmniOneWallet_iOS.AlgorithmType.MethodType : Swift.Hashable {}
+extension OmniOneWallet_iOS.AlgorithmType.MethodType : Swift.RawRepresentable {}
+extension OmniOneWallet_iOS.ClaimProof : OmniOneWallet_iOS.ProofProtocol {}
+extension OmniOneWallet_iOS.DIDStatus : Swift.Equatable {}
+extension OmniOneWallet_iOS.DIDStatus : Swift.Hashable {}
+extension OmniOneWallet_iOS.DIDStatus : Swift.RawRepresentable {}
